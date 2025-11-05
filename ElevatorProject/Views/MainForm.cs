@@ -7,8 +7,9 @@ namespace ElevatorProject
 {
     public partial class MainForm : Form
     {
-        private ElevatorController controller;
-        private Logger logger;
+        private ElevatorController _controller;
+        private Logger _logger;
+        private Database _database;
 
         public MainForm()
         {
@@ -20,14 +21,17 @@ namespace ElevatorProject
         {
             try
             {
-                // Initialize logger first
-                logger = new Logger(dgvLogs);
+                // Initialize database
+                _database = new Database();
+
+                // Initialize logger
+                _logger = new Logger(dgvLogs);
 
                 // Initialize elevator controller
-                controller = new ElevatorController(
+                _controller = new ElevatorController(
                     pnlElevator,
                     lblDisplay,
-                    logger,
+                    _logger,
                     pnlFloor0Doors,
                     pnlFloor1Doors
                 );
@@ -35,7 +39,7 @@ namespace ElevatorProject
                 // Connect all button events
                 ConnectButtonEvents();
 
-                logger.Log("Application initialized successfully", "SYSTEM");
+                _logger.Log("Application initialized successfully", "SYSTEM");
             }
             catch (Exception ex)
             {
@@ -47,20 +51,50 @@ namespace ElevatorProject
         private void ConnectButtonEvents()
         {
             // Floor buttons inside elevator
-            btnFloor0.Click += (s, e) => SafeAction(() => controller.GoToFloor(0));
-            btnFloor1.Click += (s, e) => SafeAction(() => controller.GoToFloor(1));
+            btnFloor0.Click += (s, e) => SafeAction(() => _controller.GoToFloor(0));
+            btnFloor1.Click += (s, e) => SafeAction(() => _controller.GoToFloor(1));
 
             // Call buttons on floors
-            btnCall0.Click += (s, e) => SafeAction(() => controller.GoToFloor(0));
-            btnCall1.Click += (s, e) => SafeAction(() => controller.GoToFloor(1));
+            btnCall0.Click += (s, e) => SafeAction(() => _controller.GoToFloor(0));
+            btnCall1.Click += (s, e) => SafeAction(() => _controller.GoToFloor(1));
 
             // Door control buttons
-            btnOpenDoors.Click += (s, e) => SafeAction(() => controller.ManualOpenDoors());
-            btnCloseDoors.Click += (s, e) => SafeAction(() => controller.ManualCloseDoors());
+            btnOpenDoors.Click += (s, e) => SafeAction(() => _controller.ManualOpenDoors());
+            btnCloseDoors.Click += (s, e) => SafeAction(() => _controller.ManualCloseDoors());
 
-            // Other controls
-            btnShowLog.Click += (s, e) => SafeAction(() => logger.ShowLogs());
-            btnEmergency.Click += (s, e) => SafeAction(() => controller.EmergencyStop());
+            // Log buttons
+            btnShowLog.Click += (s, e) => SafeAction(() => _logger.ShowLogs());
+            btnClearLogs.Click += (s, e) => SafeAction(() => ClearLogs());
+        }
+
+        private void ClearLogs()
+        {
+            try
+            {
+                var result = MessageBox.Show(
+                    "Are you sure you want to clear all logs from UI and database?",
+                    "Clear Logs",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    // Clear from database
+                    _database.ClearAllData();
+
+                    // Clear from UI
+                    _logger.ClearLogs();
+
+                    _logger.Log("All logs cleared successfully", "SYSTEM");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error clearing logs: {ex.Message}", "ERROR");
+                MessageBox.Show($"Failed to clear logs: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void SafeAction(Action action)
@@ -71,25 +105,24 @@ namespace ElevatorProject
             }
             catch (Exception ex)
             {
-                logger.Log($"Error in action: {ex.Message}", "ERROR");
+                _logger.Log($"Error in action: {ex.Message}", "ERROR");
             }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            logger.Log("Elevator Control System Started", "SYSTEM");
-            logger.Log("Ready for operation - Floor 0", "STATE");
+            _logger.Log("Elevator Control System Started", "SYSTEM");
+            _logger.Log("Ready for operation - Floor 0", "STATE");
         }
 
-        // Empty event handlers required by designer
-        private void btnFloor1_Click(object sender, EventArgs e) { }
-        private void btnEmergency_Click(object sender, EventArgs e) { }
-        private void lblDisplay_Click(object sender, EventArgs e) { }
-        private void grpControls_Enter(object sender, EventArgs e) { }
-        private void pnlShaft_Paint(object sender, PaintEventArgs e) { }
-        private void dgvLogs_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
-        private void btnFloor0_Click(object sender, EventArgs e) { }
-        private void btnOpenDoors_Click(object sender, EventArgs e) { }
-        private void floor0DoorRight_Paint(object sender, PaintEventArgs e) { }
+        // Empty event handlers with proper naming
+        private void BtnFloor1_Click(object sender, EventArgs e) { }
+        private void LblDisplay_Click(object sender, EventArgs e) { }
+        private void GrpControls_Enter(object sender, EventArgs e) { }
+        private void PnlShaft_Paint(object sender, PaintEventArgs e) { }
+        private void DgvLogs_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+        private void BtnFloor0_Click(object sender, EventArgs e) { }
+        private void BtnOpenDoors_Click(object sender, EventArgs e) { }
+        private void Floor0DoorRight_Paint(object sender, PaintEventArgs e) { }
     }
 }

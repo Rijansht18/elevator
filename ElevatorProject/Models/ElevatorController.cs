@@ -9,81 +9,81 @@ namespace ElevatorProject.Models
 {
     public class ElevatorController : IDisposable
     {
-        private readonly Elevator elevator;
-        private readonly Panel elevatorPanel;
-        private readonly Label displayLabel;
-        private readonly Timer moveTimer;
-        private readonly Logger logger;
+        private readonly Elevator _elevator;
+        private readonly Panel _elevatorPanel;
+        private readonly Label _displayLabel;
+        private readonly Timer _moveTimer;
+        private readonly Logger _logger;
 
-        private ElevatorState currentState;
-        private int? queuedFloorRequest;
+        private ElevatorState _currentState;
+        private int? _queuedFloorRequest;
 
-        // Movement
-        private int targetFloor;
-        private int currentY;
-        private int targetY;
-        private readonly int floor0Y = 380;
-        private readonly int floor1Y = 40;
+        // Movement - remove readonly from fields that change
+        private int _targetFloor;
+        private int _currentY;
+        private int _targetY; // Removed readonly
+        private readonly int _floor0Y = 380;
+        private readonly int _floor1Y = 40;
         private const int MOVE_SPEED = 3;
 
-        // Doors
-        private Panel elevatorDoorLeft;
-        private Panel elevatorDoorRight;
-        private Panel floor0DoorLeft;
-        private Panel floor0DoorRight;
-        private Panel floor1DoorLeft;
-        private Panel floor1DoorRight;
+        // Doors - remove readonly from fields that change
+        private Panel _elevatorDoorLeft;
+        private Panel _elevatorDoorRight;
+        private Panel _floor0DoorLeft;
+        private Panel _floor0DoorRight;
+        private Panel _floor1DoorLeft;
+        private Panel _floor1DoorRight;
 
-        private readonly Timer doorTimer;
-        private readonly Timer autoCloseTimer;
-        private int doorOpenWidth;
-        private int floor0DoorOpenWidth;
-        private int floor1DoorOpenWidth;
+        private readonly Timer _doorTimer;
+        private readonly Timer _autoCloseTimer;
+        private int _doorOpenWidth;
+        private int _floor0DoorOpenWidth;
+        private int _floor1DoorOpenWidth;
         private const int MAX_DOOR_OPEN = 120;
         private const int DOOR_SPEED = 8;
-        private bool isOpeningDoors;
-        private bool isClosingDoors;
-        private bool doorsOpen;
+        private bool _isOpeningDoors;
+        private bool _isClosingDoors;
+        private bool _doorsOpen;
 
         private const int DOOR_WIDTH = 120;
         private const int DOOR_HEIGHT = 280;
 
-        public Logger Logger => logger;
-        public int CurrentFloor => elevator.CurrentFloor;
+        public Logger Logger => _logger;
+        public int CurrentFloor => _elevator.CurrentFloor;
 
         public ElevatorController(Panel panel, Label display, Logger log, Panel floor0DoorsContainer, Panel floor1DoorsContainer)
         {
-            elevator = new Elevator();
-            elevatorPanel = panel;
-            displayLabel = display;
-            logger = log;
+            _elevator = new Elevator();
+            _elevatorPanel = panel;
+            _displayLabel = display;
+            _logger = log;
 
-            currentState = new IdleState(this);
+            _currentState = new IdleState(this);
 
             InitializeDoors(floor0DoorsContainer, floor1DoorsContainer);
 
-            // Timers
-            moveTimer = new Timer { Interval = 20 };
-            moveTimer.Tick += MoveElevatorTick;
+            // Timers with object initialization
+            _moveTimer = new Timer { Interval = 20 };
+            _moveTimer.Tick += MoveElevatorTick;
 
-            doorTimer = new Timer { Interval = 16 };
-            doorTimer.Tick += DoorAnimationTick;
+            _doorTimer = new Timer { Interval = 16 };
+            _doorTimer.Tick += DoorAnimationTick;
 
-            autoCloseTimer = new Timer { Interval = 3000 };
-            autoCloseTimer.Tick += AutoCloseDoors;
+            _autoCloseTimer = new Timer { Interval = 3000 };
+            _autoCloseTimer.Tick += AutoCloseDoors;
 
             // Events
-            elevator.FloorChanged += OnFloorChanged;
-            elevator.MovementCompleted += OnMovementCompleted;
+            _elevator.FloorChanged += OnFloorChanged;
+            _elevator.MovementCompleted += OnMovementCompleted;
 
             // Initial position
-            currentY = floor0Y;
-            elevatorPanel.Top = currentY;
+            _currentY = _floor0Y;
+            _elevatorPanel.Top = _currentY;
 
             ResetAllDoors();
 
-            logger.Log("Elevator initialized at Floor 0", "SYSTEM");
-            UpdateDisplay($"FLOOR {elevator.CurrentFloor}");
+            _logger.Log("Elevator initialized at Floor 0", "SYSTEM");
+            UpdateDisplay($"FLOOR {_elevator.CurrentFloor}");
         }
 
         private void InitializeDoors(Panel floor0DoorsContainer, Panel floor1DoorsContainer)
@@ -94,8 +94,8 @@ namespace ElevatorProject.Models
             {
                 foreach (Control control in floor0DoorsContainer.Controls)
                 {
-                    if (control.Name == "floor0DoorLeft") floor0DoorLeft = control as Panel;
-                    if (control.Name == "floor0DoorRight") floor0DoorRight = control as Panel;
+                    if (control.Name == "floor0DoorLeft") _floor0DoorLeft = control as Panel;
+                    if (control.Name == "floor0DoorRight") _floor0DoorRight = control as Panel;
                 }
             }
 
@@ -103,84 +103,82 @@ namespace ElevatorProject.Models
             {
                 foreach (Control control in floor1DoorsContainer.Controls)
                 {
-                    if (control.Name == "floor1DoorLeft") floor1DoorLeft = control as Panel;
-                    if (control.Name == "floor1DoorRight") floor1DoorRight = control as Panel;
+                    if (control.Name == "floor1DoorLeft") _floor1DoorLeft = control as Panel;
+                    if (control.Name == "floor1DoorRight") _floor1DoorRight = control as Panel;
                 }
             }
         }
 
         private void CreateElevatorDoors()
         {
-            elevatorPanel.Controls.Clear();
+            _elevatorPanel.Controls.Clear();
 
-            elevatorDoorLeft = new Panel();
-            elevatorDoorLeft.Name = "elevatorDoorLeft";
-            elevatorDoorLeft.BackColor = Color.FromArgb(149, 165, 166);
-            elevatorDoorLeft.Size = new Size(DOOR_WIDTH, DOOR_HEIGHT);
-            elevatorDoorLeft.Location = new Point(0, 0);
+            _elevatorDoorLeft = new Panel
+            {
+                Name = "elevatorDoorLeft",
+                BackColor = Color.FromArgb(149, 165, 166),
+                Size = new Size(DOOR_WIDTH, DOOR_HEIGHT),
+                Location = new Point(0, 0)
+            };
 
-            elevatorDoorRight = new Panel();
-            elevatorDoorRight.Name = "elevatorDoorRight";
-            elevatorDoorRight.BackColor = Color.FromArgb(149, 165, 166);
-            elevatorDoorRight.Size = new Size(DOOR_WIDTH, DOOR_HEIGHT);
-            elevatorDoorRight.Location = new Point(DOOR_WIDTH, 0);
+            _elevatorDoorRight = new Panel
+            {
+                Name = "elevatorDoorRight",
+                BackColor = Color.FromArgb(149, 165, 166),
+                Size = new Size(DOOR_WIDTH, DOOR_HEIGHT),
+                Location = new Point(DOOR_WIDTH, 0)
+            };
 
-            elevatorPanel.Controls.Add(elevatorDoorLeft);
-            elevatorPanel.Controls.Add(elevatorDoorRight);
+            _elevatorPanel.Controls.Add(_elevatorDoorLeft);
+            _elevatorPanel.Controls.Add(_elevatorDoorRight);
         }
 
         // Public methods
         public void GoToFloor(int floor)
         {
-            logger.Log($"User requested floor {floor}", "USER");
-            currentState.MoveToFloor(floor);
+            _logger.Log($"User requested floor {floor}", "USER");
+            _currentState.MoveToFloor(floor);
         }
 
         public void ManualOpenDoors()
         {
-            logger.Log("User manually opening doors", "USER");
-            currentState.OpenDoors();
+            _logger.Log("User manually opening doors", "USER");
+            _currentState.OpenDoors();
         }
 
         public void ManualCloseDoors()
         {
-            logger.Log("User manually closing doors", "USER");
-            currentState.CloseDoors();
-        }
-
-        public void EmergencyStop()
-        {
-            logger.Log("User triggered emergency stop", "USER");
-            currentState.EmergencyStop();
+            _logger.Log("User manually closing doors", "USER");
+            _currentState.CloseDoors();
         }
 
         // Internal methods
         public void SetState(ElevatorState newState)
         {
-            currentState = newState;
-            logger.Log($"State: {newState.GetStateName()}", "STATE");
+            _currentState = newState;
+            _logger.Log($"State: {newState.GetStateName()}", "STATE");
         }
 
         public void QueueFloorRequest(int floor)
         {
-            queuedFloorRequest = floor;
-            logger.Log($"Queued floor {floor}", "QUEUE");
+            _queuedFloorRequest = floor;
+            _logger.Log($"Queued floor {floor}", "QUEUE");
         }
 
         public void MoveToFloorInternal(int floor)
         {
-            if (elevator.IsMoving) return;
+            if (_elevator.IsMoving) return;
 
-            logger.Log($"Moving to floor {floor}", "MOVEMENT");
-            targetFloor = floor;
+            _logger.Log($"Moving to floor {floor}", "MOVEMENT");
+            _targetFloor = floor;
 
-            if (elevator.CurrentFloor == targetFloor)
+            if (_elevator.CurrentFloor == _targetFloor)
             {
                 OpenDoorsInternal();
                 return;
             }
 
-            if (doorsOpen)
+            if (_doorsOpen)
             {
                 QueueFloorRequest(floor);
                 CloseDoorsInternal();
@@ -193,114 +191,98 @@ namespace ElevatorProject.Models
 
         public void OpenDoorsInternal()
         {
-            if (isOpeningDoors || doorsOpen) return;
+            if (_isOpeningDoors || _doorsOpen) return;
 
-            logger.Log($"Opening doors at floor {elevator.CurrentFloor}", "DOOR");
+            _logger.Log($"Opening doors at floor {_elevator.CurrentFloor}", "DOOR");
             SetState(new DoorOpenState(this));
 
-            isOpeningDoors = true;
-            isClosingDoors = false;
-            autoCloseTimer.Stop();
-            doorTimer.Start();
+            _isOpeningDoors = true;
+            _isClosingDoors = false;
+            _autoCloseTimer.Stop();
+            _doorTimer.Start();
         }
 
         public void CloseDoorsInternal()
         {
-            if (isClosingDoors || !doorsOpen) return;
+            if (_isClosingDoors || !_doorsOpen) return;
 
-            logger.Log($"Closing doors at floor {elevator.CurrentFloor}", "DOOR");
+            _logger.Log($"Closing doors at floor {_elevator.CurrentFloor}", "DOOR");
             SetState(new ClosingDoorsState(this));
 
-            isClosingDoors = true;
-            isOpeningDoors = false;
-            autoCloseTimer.Stop();
-            doorTimer.Start();
+            _isClosingDoors = true;
+            _isOpeningDoors = false;
+            _autoCloseTimer.Stop();
+            _doorTimer.Start();
         }
 
         public void ArriveAtFloorInternal(int floor)
         {
-            logger.Log($"Arrived at floor {floor}", "ARRIVAL");
+            _logger.Log($"Arrived at floor {floor}", "ARRIVAL");
             OpenDoorsInternal();
-        }
-
-        public void EmergencyStopInternal()
-        {
-            SetState(new EmergencyState(this));
-
-            moveTimer.Stop();
-            doorTimer.Stop();
-            autoCloseTimer.Stop();
-
-            isOpeningDoors = false;
-            isClosingDoors = false;
-            doorsOpen = false;
-
-            logger.Log("EMERGENCY STOP ACTIVATED", "EMERGENCY");
-            UpdateDisplay("EMERGENCY", Color.Red);
         }
 
         private void StartMovement()
         {
-            autoCloseTimer.Stop();
-            targetY = (targetFloor == 0) ? floor0Y : floor1Y;
+            _autoCloseTimer.Stop();
+            _targetY = (_targetFloor == 0) ? _floor0Y : _floor1Y;
 
-            UpdateDisplay($"MOVING TO {targetFloor}", Color.Yellow);
-            elevator.MoveToFloor(targetFloor);
-            moveTimer.Start();
+            UpdateDisplay($"MOVING TO {_targetFloor}", Color.Yellow);
+            _elevator.MoveToFloor(_targetFloor);
+            _moveTimer.Start();
         }
 
         private void MoveElevatorTick(object sender, EventArgs e)
         {
-            int direction = targetY < currentY ? -1 : 1;
-            currentY += direction * MOVE_SPEED;
+            int direction = _targetY < _currentY ? -1 : 1;
+            _currentY += direction * MOVE_SPEED;
 
-            bool reachedTarget = (direction == -1 && currentY <= targetY) ||
-                               (direction == 1 && currentY >= targetY);
+            bool reachedTarget = (direction == -1 && _currentY <= _targetY) ||
+                               (direction == 1 && _currentY >= _targetY);
 
             if (reachedTarget)
             {
-                currentY = targetY;
-                moveTimer.Stop();
-                elevatorPanel.Top = currentY;
-                elevator.OnArrivedAtFloor(targetFloor);
+                _currentY = _targetY;
+                _moveTimer.Stop();
+                _elevatorPanel.Top = _currentY;
+                _elevator.OnArrivedAtFloor(_targetFloor);
             }
             else
             {
-                elevatorPanel.Top = currentY;
+                _elevatorPanel.Top = _currentY;
             }
         }
 
         private void DoorAnimationTick(object sender, EventArgs e)
         {
-            if (isOpeningDoors)
+            if (_isOpeningDoors)
             {
-                if (doorOpenWidth < MAX_DOOR_OPEN)
+                if (_doorOpenWidth < MAX_DOOR_OPEN)
                 {
-                    doorOpenWidth += DOOR_SPEED;
+                    _doorOpenWidth += DOOR_SPEED;
                 }
                 else
                 {
-                    doorsOpen = true;
-                    isOpeningDoors = false;
-                    doorTimer.Stop();
-                    logger.Log("Doors fully opened", "DOOR");
-                    UpdateDisplay($"FLOOR {elevator.CurrentFloor} - OPEN", Color.Lime);
-                    autoCloseTimer.Start();
+                    _doorsOpen = true;
+                    _isOpeningDoors = false;
+                    _doorTimer.Stop();
+                    _logger.Log("Doors fully opened", "DOOR");
+                    UpdateDisplay($"FLOOR {_elevator.CurrentFloor} - OPEN", Color.Lime);
+                    _autoCloseTimer.Start();
                 }
             }
-            else if (isClosingDoors)
+            else if (_isClosingDoors)
             {
-                if (doorOpenWidth > 0)
+                if (_doorOpenWidth > 0)
                 {
-                    doorOpenWidth -= DOOR_SPEED;
+                    _doorOpenWidth -= DOOR_SPEED;
                 }
                 else
                 {
-                    doorsOpen = false;
-                    isClosingDoors = false;
-                    doorTimer.Stop();
-                    logger.Log("Doors fully closed", "DOOR");
-                    UpdateDisplay($"FLOOR {elevator.CurrentFloor}");
+                    _doorsOpen = false;
+                    _isClosingDoors = false;
+                    _doorTimer.Stop();
+                    _logger.Log("Doors fully closed", "DOOR");
+                    UpdateDisplay($"FLOOR {_elevator.CurrentFloor}");
 
                     ProcessQueuedRequest();
                 }
@@ -312,46 +294,46 @@ namespace ElevatorProject.Models
         private void UpdateAllDoorPositions()
         {
             // Elevator doors
-            if (elevatorDoorLeft != null) elevatorDoorLeft.Left = -doorOpenWidth;
-            if (elevatorDoorRight != null) elevatorDoorRight.Left = DOOR_WIDTH + doorOpenWidth;
+            if (_elevatorDoorLeft != null) _elevatorDoorLeft.Left = -_doorOpenWidth;
+            if (_elevatorDoorRight != null) _elevatorDoorRight.Left = DOOR_WIDTH + _doorOpenWidth;
 
             // Floor doors
-            if (elevator.CurrentFloor == 0)
+            if (_elevator.CurrentFloor == 0)
             {
-                if (floor0DoorLeft != null) floor0DoorLeft.Left = -doorOpenWidth;
-                if (floor0DoorRight != null) floor0DoorRight.Left = DOOR_WIDTH + doorOpenWidth;
+                if (_floor0DoorLeft != null) _floor0DoorLeft.Left = -_doorOpenWidth;
+                if (_floor0DoorRight != null) _floor0DoorRight.Left = DOOR_WIDTH + _doorOpenWidth;
             }
-            else if (elevator.CurrentFloor == 1)
+            else if (_elevator.CurrentFloor == 1)
             {
-                if (floor1DoorLeft != null) floor1DoorLeft.Left = -doorOpenWidth;
-                if (floor1DoorRight != null) floor1DoorRight.Left = DOOR_WIDTH + doorOpenWidth;
+                if (_floor1DoorLeft != null) _floor1DoorLeft.Left = -_doorOpenWidth;
+                if (_floor1DoorRight != null) _floor1DoorRight.Left = DOOR_WIDTH + _doorOpenWidth;
             }
         }
 
         private void ResetAllDoors()
         {
-            doorOpenWidth = 0;
-            floor0DoorOpenWidth = 0;
-            floor1DoorOpenWidth = 0;
+            _doorOpenWidth = 0;
+            _floor0DoorOpenWidth = 0;
+            _floor1DoorOpenWidth = 0;
             UpdateAllDoorPositions();
         }
 
         private void AutoCloseDoors(object sender, EventArgs e)
         {
-            autoCloseTimer.Stop();
-            if (doorsOpen && !isClosingDoors)
+            _autoCloseTimer.Stop();
+            if (_doorsOpen && !_isClosingDoors)
             {
-                logger.Log("Auto-closing doors", "DOOR");
+                _logger.Log("Auto-closing doors", "DOOR");
                 CloseDoorsInternal();
             }
         }
 
         private void ProcessQueuedRequest()
         {
-            if (queuedFloorRequest.HasValue)
+            if (_queuedFloorRequest.HasValue)
             {
-                int floor = queuedFloorRequest.Value;
-                queuedFloorRequest = null;
+                int floor = _queuedFloorRequest.Value;
+                _queuedFloorRequest = null;
                 SetState(new MovingState(this));
                 MoveToFloorInternal(floor);
             }
@@ -364,37 +346,37 @@ namespace ElevatorProject.Models
         private void OnFloorChanged(object sender, int floor)
         {
             UpdateDisplay($"FLOOR {floor}");
-            logger.Log($"Now at floor {floor}", "ARRIVAL");
+            _logger.Log($"Now at floor {floor}", "ARRIVAL");
         }
 
         private void OnMovementCompleted(object sender, EventArgs e)
         {
             SetState(new ArrivedState(this));
-            currentState.ArriveAtFloor(elevator.CurrentFloor);
+            _currentState.ArriveAtFloor(_elevator.CurrentFloor);
         }
 
         private void UpdateDisplay(string text, Color? color = null)
         {
-            if (displayLabel.InvokeRequired)
+            if (_displayLabel.InvokeRequired)
             {
-                displayLabel.Invoke(new Action(() =>
+                _displayLabel.Invoke(new Action(() =>
                 {
-                    displayLabel.Text = text;
-                    displayLabel.ForeColor = color ?? Color.Lime;
+                    _displayLabel.Text = text;
+                    _displayLabel.ForeColor = color ?? Color.Lime;
                 }));
             }
             else
             {
-                displayLabel.Text = text;
-                displayLabel.ForeColor = color ?? Color.Lime;
+                _displayLabel.Text = text;
+                _displayLabel.ForeColor = color ?? Color.Lime;
             }
         }
 
         public void Dispose()
         {
-            moveTimer?.Dispose();
-            doorTimer?.Dispose();
-            autoCloseTimer?.Dispose();
+            _moveTimer?.Dispose();
+            _doorTimer?.Dispose();
+            _autoCloseTimer?.Dispose();
         }
     }
 }

@@ -26,11 +26,6 @@
             controller.ArriveAtFloorInternal(floor);
         }
 
-        public override void EmergencyStop()
-        {
-            controller.Logger.Log("Emergency stop while moving!", "EMERGENCY");
-            controller.EmergencyStopInternal();
-        }
 
         public override string GetStateName()
         {

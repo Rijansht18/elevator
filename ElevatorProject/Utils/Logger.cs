@@ -7,80 +7,84 @@ namespace ElevatorProject.Utils
 {
     public class Logger
     {
-        private DataGridView grid;
-        private DataTable table;
+        private readonly DataGridView _grid;
+        private DataTable _table;
 
         public Logger(DataGridView dataGrid)
         {
-            grid = dataGrid;
+            _grid = dataGrid;
             InitializeDataTable();
             ConfigureGridAppearance();
         }
 
         private void InitializeDataTable()
         {
-            table = new DataTable();
-            table.Columns.Add("Time", typeof(string));
-            table.Columns.Add("Message", typeof(string));
-            grid.DataSource = table;
+            _table = new DataTable();
+            _table.Columns.Add("Time", typeof(string));
+            _table.Columns.Add("Message", typeof(string));
+            _grid.DataSource = _table;
         }
 
         private void ConfigureGridAppearance()
         {
             // Clear any existing columns
-            grid.Columns.Clear();
+            _grid.Columns.Clear();
 
             // Set basic properties
-            grid.BackgroundColor = Color.FromArgb(44, 62, 80);
-            grid.BorderStyle = BorderStyle.None;
-            grid.EnableHeadersVisualStyles = false;
+            _grid.BackgroundColor = Color.FromArgb(44, 62, 80);
+            _grid.BorderStyle = BorderStyle.None;
+            _grid.EnableHeadersVisualStyles = false;
 
             // Configure columns
-            grid.AutoGenerateColumns = false;
+            _grid.AutoGenerateColumns = false;
 
             // Time column
-            DataGridViewTextBoxColumn timeColumn = new DataGridViewTextBoxColumn();
-            timeColumn.HeaderText = "Time";
-            timeColumn.DataPropertyName = "Time";
-            timeColumn.Width = 80;
-            timeColumn.ReadOnly = true;
-            grid.Columns.Add(timeColumn);
+            DataGridViewTextBoxColumn timeColumn = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Time",
+                DataPropertyName = "Time",
+                Width = 80,
+                ReadOnly = true
+            };
+            _grid.Columns.Add(timeColumn);
 
             // Message column
-            DataGridViewTextBoxColumn messageColumn = new DataGridViewTextBoxColumn();
-            messageColumn.HeaderText = "Message";
-            messageColumn.DataPropertyName = "Message";
-            messageColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            messageColumn.ReadOnly = true;
-            grid.Columns.Add(messageColumn);
+            DataGridViewTextBoxColumn messageColumn = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Message",
+                DataPropertyName = "Message",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                ReadOnly = true
+            };
+            _grid.Columns.Add(messageColumn);
 
             // Header style
-            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            grid.ColumnHeadersHeight = 30;
+            _grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+            _grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            _grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            _grid.ColumnHeadersHeight = 30;
 
             // Row style
-            grid.DefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
-            grid.DefaultCellStyle.ForeColor = Color.White;
-            grid.DefaultCellStyle.Font = new Font("Segoe UI", 8.5F);
-            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
-            grid.DefaultCellStyle.SelectionForeColor = Color.White;
+            _grid.DefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
+            _grid.DefaultCellStyle.ForeColor = Color.White;
+            _grid.DefaultCellStyle.Font = new Font("Segoe UI", 8.5F);
+            _grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
+            _grid.DefaultCellStyle.SelectionForeColor = Color.White;
 
             // Grid lines
-            grid.GridColor = Color.FromArgb(60, 60, 60);
+            _grid.GridColor = Color.FromArgb(60, 60, 60);
 
             // Row height
-            grid.RowTemplate.Height = 22;
+            _grid.RowTemplate.Height = 22;
         }
 
         public void Log(string message, string type = "INFO")
         {
             string timestamp = DateTime.Now.ToString("HH:mm:ss");
 
-            if (grid.InvokeRequired)
+            if (_grid.InvokeRequired)
             {
-                grid.Invoke(new Action(() =>
+                _grid.Invoke(new Action(() =>
                 {
                     AddLogEntry(timestamp, message, type);
                 }));
@@ -93,26 +97,40 @@ namespace ElevatorProject.Utils
 
         private void AddLogEntry(string timestamp, string message, string type)
         {
-            table.Rows.Add(timestamp, $"[{type}] {message}");
+            _table.Rows.Add(timestamp, $"[{type}] {message}");
 
             // Auto-scroll to bottom
-            if (grid.Rows.Count > 0)
+            if (_grid.Rows.Count > 0)
             {
-                grid.FirstDisplayedScrollingRowIndex = grid.Rows.Count - 1;
+                _grid.FirstDisplayedScrollingRowIndex = _grid.Rows.Count - 1;
+            }
+        }
+
+        public void ClearLogs()
+        {
+            if (_grid.InvokeRequired)
+            {
+                _grid.Invoke(new Action(() =>
+                {
+                    _table.Rows.Clear();
+                }));
+            }
+            else
+            {
+                _table.Rows.Clear();
             }
         }
 
         public void ShowLogs()
         {
-            string logInfo = $"Total Log Entries: {table.Rows.Count}\n\n" +
+            string logInfo = $"Total Log Entries: {_table.Rows.Count}\n\n" +
                            "Log Types:\n" +
                            "• SYSTEM - System initialization\n" +
                            "• STATE - State changes\n" +
                            "• DOOR - Door operations\n" +
                            "• MOVEMENT - Elevator movement\n" +
                            "• ARRIVAL - Floor arrivals\n" +
-                           "• USER - User actions\n" +
-                           "• EMERGENCY - Emergency events";
+                           "• USER - User actions";
 
             MessageBox.Show(logInfo, "Elevator Logs Information",
                           MessageBoxButtons.OK, MessageBoxIcon.Information);

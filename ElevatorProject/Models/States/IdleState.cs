@@ -33,11 +33,6 @@
             controller.Logger.Log("Cannot arrive while idle", "STATE");
         }
 
-        public override void EmergencyStop()
-        {
-            controller.Logger.Log("Emergency stop activated", "EMERGENCY");
-            controller.EmergencyStopInternal();
-        }
 
         public override string GetStateName()
         {

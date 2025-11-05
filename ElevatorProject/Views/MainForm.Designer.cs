@@ -17,7 +17,6 @@ namespace ElevatorProject
         private DataGridView dgvLogs;
         private Button btnShowLog;
         private System.Windows.Forms.Timer timer1;
-        private Button btnEmergency;
         private Button btnOpenDoors;
         private Button btnCloseDoors;
         private Panel pnlElevator;
@@ -29,6 +28,7 @@ namespace ElevatorProject
         private Panel floor1DoorRight;
         private Panel pnlShaft;
         private Label lblTitle;
+        private Button btnClearLogs;
 
         protected override void Dispose(bool disposing)
         {
@@ -45,8 +45,8 @@ namespace ElevatorProject
         {
             this.components = new System.ComponentModel.Container();
             this.grpControls = new System.Windows.Forms.GroupBox();
+            this.btnClearLogs = new System.Windows.Forms.Button();
             this.btnShowLog = new System.Windows.Forms.Button();
-            this.btnEmergency = new System.Windows.Forms.Button();
             this.btnCloseDoors = new System.Windows.Forms.Button();
             this.btnOpenDoors = new System.Windows.Forms.Button();
             this.btnFloor0 = new System.Windows.Forms.Button();
@@ -70,8 +70,8 @@ namespace ElevatorProject
 
             // grpControls
             this.grpControls.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.grpControls.Controls.Add(this.btnClearLogs);
             this.grpControls.Controls.Add(this.btnShowLog);
-            this.grpControls.Controls.Add(this.btnEmergency);
             this.grpControls.Controls.Add(this.btnCloseDoors);
             this.grpControls.Controls.Add(this.btnOpenDoors);
             this.grpControls.Controls.Add(this.btnFloor0);
@@ -82,10 +82,23 @@ namespace ElevatorProject
             this.grpControls.ForeColor = System.Drawing.Color.White;
             this.grpControls.Location = new System.Drawing.Point(450, 150);
             this.grpControls.Name = "grpControls";
-            this.grpControls.Size = new System.Drawing.Size(240, 350);
+            this.grpControls.Size = new System.Drawing.Size(240, 320);
             this.grpControls.TabIndex = 1;
             this.grpControls.TabStop = false;
             this.grpControls.Text = "CONTROL PANEL";
+
+            // btnClearLogs
+            this.btnClearLogs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
+            this.btnClearLogs.FlatAppearance.BorderSize = 0;
+            this.btnClearLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLogs.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnClearLogs.ForeColor = System.Drawing.Color.White;
+            this.btnClearLogs.Location = new System.Drawing.Point(130, 270);
+            this.btnClearLogs.Name = "btnClearLogs";
+            this.btnClearLogs.Size = new System.Drawing.Size(100, 35);
+            this.btnClearLogs.TabIndex = 8;
+            this.btnClearLogs.Text = "CLEAR LOGS";
+            this.btnClearLogs.UseVisualStyleBackColor = false;
 
             // btnShowLog
             this.btnShowLog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(89)))), ((int)(((byte)(182)))));
@@ -93,35 +106,22 @@ namespace ElevatorProject
             this.btnShowLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnShowLog.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnShowLog.ForeColor = System.Drawing.Color.White;
-            this.btnShowLog.Location = new System.Drawing.Point(55, 295);
+            this.btnShowLog.Location = new System.Drawing.Point(20, 270);
             this.btnShowLog.Name = "btnShowLog";
-            this.btnShowLog.Size = new System.Drawing.Size(130, 40);
+            this.btnShowLog.Size = new System.Drawing.Size(100, 35);
             this.btnShowLog.TabIndex = 7;
             this.btnShowLog.Text = "SHOW LOGS";
             this.btnShowLog.UseVisualStyleBackColor = false;
 
-            // btnEmergency
-            this.btnEmergency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
-            this.btnEmergency.FlatAppearance.BorderSize = 0;
-            this.btnEmergency.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEmergency.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            this.btnEmergency.ForeColor = System.Drawing.Color.White;
-            this.btnEmergency.Location = new System.Drawing.Point(30, 245);
-            this.btnEmergency.Name = "btnEmergency";
-            this.btnEmergency.Size = new System.Drawing.Size(180, 40);
-            this.btnEmergency.TabIndex = 3;
-            this.btnEmergency.Text = "EMERGENCY STOP";
-            this.btnEmergency.UseVisualStyleBackColor = false;
-
             // btnCloseDoors
-            this.btnCloseDoors.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
+            this.btnCloseDoors.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
             this.btnCloseDoors.FlatAppearance.BorderSize = 0;
             this.btnCloseDoors.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCloseDoors.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnCloseDoors.ForeColor = System.Drawing.Color.White;
-            this.btnCloseDoors.Location = new System.Drawing.Point(55, 200);
+            this.btnCloseDoors.Location = new System.Drawing.Point(130, 220);
             this.btnCloseDoors.Name = "btnCloseDoors";
-            this.btnCloseDoors.Size = new System.Drawing.Size(130, 35);
+            this.btnCloseDoors.Size = new System.Drawing.Size(100, 35);
             this.btnCloseDoors.TabIndex = 5;
             this.btnCloseDoors.Text = "CLOSE";
             this.btnCloseDoors.UseVisualStyleBackColor = false;
@@ -132,9 +132,9 @@ namespace ElevatorProject
             this.btnOpenDoors.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOpenDoors.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnOpenDoors.ForeColor = System.Drawing.Color.White;
-            this.btnOpenDoors.Location = new System.Drawing.Point(55, 160);
+            this.btnOpenDoors.Location = new System.Drawing.Point(20, 220);
             this.btnOpenDoors.Name = "btnOpenDoors";
-            this.btnOpenDoors.Size = new System.Drawing.Size(130, 35);
+            this.btnOpenDoors.Size = new System.Drawing.Size(100, 35);
             this.btnOpenDoors.TabIndex = 6;
             this.btnOpenDoors.Text = "OPEN";
             this.btnOpenDoors.UseVisualStyleBackColor = false;
@@ -145,7 +145,7 @@ namespace ElevatorProject
             this.btnFloor0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFloor0.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold);
             this.btnFloor0.ForeColor = System.Drawing.Color.White;
-            this.btnFloor0.Location = new System.Drawing.Point(140, 105);
+            this.btnFloor0.Location = new System.Drawing.Point(140, 140);
             this.btnFloor0.Name = "btnFloor0";
             this.btnFloor0.Size = new System.Drawing.Size(60, 60);
             this.btnFloor0.TabIndex = 2;
@@ -158,7 +158,7 @@ namespace ElevatorProject
             this.btnFloor1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFloor1.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold);
             this.btnFloor1.ForeColor = System.Drawing.Color.White;
-            this.btnFloor1.Location = new System.Drawing.Point(55, 105);
+            this.btnFloor1.Location = new System.Drawing.Point(55, 140);
             this.btnFloor1.Name = "btnFloor1";
             this.btnFloor1.Size = new System.Drawing.Size(60, 60);
             this.btnFloor1.TabIndex = 1;
@@ -180,6 +180,7 @@ namespace ElevatorProject
             // lblFloor1
             this.lblFloor1.AutoSize = true;
             this.lblFloor1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblFloor1.ForeColor = System.Drawing.Color.White;
             this.lblFloor1.Location = new System.Drawing.Point(480, 90);
             this.lblFloor1.Name = "lblFloor1";
             this.lblFloor1.Size = new System.Drawing.Size(90, 28);
@@ -202,6 +203,7 @@ namespace ElevatorProject
             // lblFloor0
             this.lblFloor0.AutoSize = true;
             this.lblFloor0.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblFloor0.ForeColor = System.Drawing.Color.White;
             this.lblFloor0.Location = new System.Drawing.Point(430, 520);
             this.lblFloor0.Name = "lblFloor0";
             this.lblFloor0.Size = new System.Drawing.Size(90, 28);

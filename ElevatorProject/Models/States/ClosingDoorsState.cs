@@ -26,11 +26,6 @@
             controller.Logger.Log("Error: Can't arrive while closing doors", "STATE");
         }
 
-        public override void EmergencyStop()
-        {
-            controller.Logger.Log("Emergency stop!", "EMERGENCY");
-            controller.EmergencyStopInternal();
-        }
 
         public override string GetStateName()
         {

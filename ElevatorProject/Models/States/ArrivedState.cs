@@ -27,11 +27,6 @@
             controller.OpenDoorsInternal();
         }
 
-        public override void EmergencyStop()
-        {
-            controller.Logger.Log("Emergency stop!", "EMERGENCY");
-            controller.EmergencyStopInternal();
-        }
 
         public override string GetStateName()
         {

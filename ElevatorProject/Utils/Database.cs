@@ -27,8 +27,10 @@ namespace ElevatorProject.Utils
             if (isNewDatabase)
             {
                 SQLiteConnection.CreateFile(dbPath);
-                CreateTables();
             }
+
+            // Always create tables (they won't be created if they already exist)
+            CreateTables();
         }
 
         private void CreateTables()
@@ -37,7 +39,7 @@ namespace ElevatorProject.Utils
             {
                 connection.Open();
 
-                // Logs Table
+                // Logs Table - Only essential table for elevator operations
                 string createLogsTable = @"
                     CREATE TABLE IF NOT EXISTS Logs (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,37 +53,8 @@ namespace ElevatorProject.Utils
                         State TEXT
                     )";
 
-                // Trips Table
-                string createTripsTable = @"
-                    CREATE TABLE IF NOT EXISTS Trips (
-                        TripId INTEGER PRIMARY KEY AUTOINCREMENT,
-                        StartFloor INTEGER NOT NULL,
-                        EndFloor INTEGER NOT NULL,
-                        StartTime TEXT NOT NULL,
-                        EndTime TEXT,
-                        Duration INTEGER,
-                        Status TEXT DEFAULT 'Completed'
-                    )";
-
-                // Emergency Events Table
-                string createEmergencyTable = @"
-                    CREATE TABLE IF NOT EXISTS EmergencyEvents (
-                        EventId INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Timestamp TEXT NOT NULL,
-                        Floor INTEGER,
-                        Message TEXT,
-                        Resolved TEXT DEFAULT 'No'
-                    )";
-
-                using (var command = new SQLiteCommand(connection))
+                using (var command = new SQLiteCommand(createLogsTable, connection))
                 {
-                    command.CommandText = createLogsTable;
-                    command.ExecuteNonQuery();
-
-                    command.CommandText = createTripsTable;
-                    command.ExecuteNonQuery();
-
-                    command.CommandText = createEmergencyTable;
                     command.ExecuteNonQuery();
                 }
 
@@ -122,113 +95,6 @@ namespace ElevatorProject.Utils
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show($"Error saving log: {ex.Message}");
-            }
-        }
-
-        public int StartTrip(int startFloor, int endFloor)
-        {
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string query = @"
-                        INSERT INTO Trips (StartFloor, EndFloor, StartTime, Status)
-                        VALUES (@startFloor, @endFloor, @startTime, 'In Progress');
-                        SELECT last_insert_rowid();";
-
-                    using (var command = new SQLiteCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@startFloor", startFloor);
-                        command.Parameters.AddWithValue("@endFloor", endFloor);
-                        command.Parameters.AddWithValue("@startTime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-                        return Convert.ToInt32(command.ExecuteScalar());
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show($"Error starting trip: {ex.Message}");
-                return -1;
-            }
-        }
-
-        public void CompleteTrip(int tripId)
-        {
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string getStartQuery = "SELECT StartTime FROM Trips WHERE TripId = @tripId";
-                    DateTime startTime;
-
-                    using (var cmd = new SQLiteCommand(getStartQuery, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@tripId", tripId);
-                        var result = cmd.ExecuteScalar();
-                        if (result != null)
-                        {
-                            startTime = DateTime.Parse(result.ToString());
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-
-                    DateTime endTime = DateTime.Now;
-                    int duration = (int)(endTime - startTime).TotalSeconds;
-
-                    string query = @"
-                        UPDATE Trips 
-                        SET EndTime = @endTime, Duration = @duration, Status = 'Completed'
-                        WHERE TripId = @tripId";
-
-                    using (var command = new SQLiteCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@endTime", endTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                        command.Parameters.AddWithValue("@duration", duration);
-                        command.Parameters.AddWithValue("@tripId", tripId);
-
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show($"Error completing trip: {ex.Message}");
-            }
-        }
-
-        public void SaveEmergency(int floor, string message)
-        {
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string query = @"
-                        INSERT INTO EmergencyEvents (Timestamp, Floor, Message)
-                        VALUES (@timestamp, @floor, @message)";
-
-                    using (var command = new SQLiteCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@timestamp", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                        command.Parameters.AddWithValue("@floor", floor);
-                        command.Parameters.AddWithValue("@message", message);
-
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show($"Error saving emergency: {ex.Message}");
             }
         }
 
@@ -318,52 +184,6 @@ namespace ElevatorProject.Utils
             return GetLogsByDate(DateTime.Today);
         }
 
-        public DataTable GetAllTrips()
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT * FROM Trips ORDER BY TripId DESC";
-
-                    using (var adapter = new SQLiteDataAdapter(query, connection))
-                    {
-                        adapter.Fill(dt);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show($"Error getting trips: {ex.Message}");
-            }
-            return dt;
-        }
-
-        public DataTable GetAllEmergencies()
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT * FROM EmergencyEvents ORDER BY EventId DESC";
-
-                    using (var adapter = new SQLiteDataAdapter(query, connection))
-                    {
-                        adapter.Fill(dt);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show($"Error getting emergencies: {ex.Message}");
-            }
-            return dt;
-        }
-
         // ==================== STATISTICS METHODS ====================
 
         public int GetTotalLogs()
@@ -374,48 +194,6 @@ namespace ElevatorProject.Utils
                 {
                     connection.Open();
                     string query = "SELECT COUNT(*) FROM Logs";
-
-                    using (var command = new SQLiteCommand(query, connection))
-                    {
-                        return Convert.ToInt32(command.ExecuteScalar());
-                    }
-                }
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-
-        public int GetTotalTrips()
-        {
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT COUNT(*) FROM Trips WHERE Status = 'Completed'";
-
-                    using (var command = new SQLiteCommand(query, connection))
-                    {
-                        return Convert.ToInt32(command.ExecuteScalar());
-                    }
-                }
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-
-        public int GetEmergencyCount()
-        {
-            try
-            {
-                using (var connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT COUNT(*) FROM EmergencyEvents";
 
                     using (var command = new SQLiteCommand(query, connection))
                     {
@@ -442,15 +220,8 @@ namespace ElevatorProject.Utils
                 {
                     connection.Open();
 
-                    using (var command = new SQLiteCommand(connection))
+                    using (var command = new SQLiteCommand("DELETE FROM Logs", connection))
                     {
-                        command.CommandText = "DELETE FROM Logs";
-                        command.ExecuteNonQuery();
-
-                        command.CommandText = "DELETE FROM Trips";
-                        command.ExecuteNonQuery();
-
-                        command.CommandText = "DELETE FROM EmergencyEvents";
                         command.ExecuteNonQuery();
                     }
                 }

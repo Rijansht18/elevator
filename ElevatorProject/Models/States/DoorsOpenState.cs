@@ -27,11 +27,6 @@
             controller.Logger.Log("Already arrived at floor", "ARRIVAL");
         }
 
-        public override void EmergencyStop()
-        {
-            controller.Logger.Log("Emergency stop with doors open!", "EMERGENCY");
-            controller.EmergencyStopInternal();
-        }
 
         public override string GetStateName()
         {

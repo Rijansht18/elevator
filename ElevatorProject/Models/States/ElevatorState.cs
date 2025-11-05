@@ -13,7 +13,6 @@
         public abstract void OpenDoors();
         public abstract void CloseDoors();
         public abstract void ArriveAtFloor(int floor);
-        public abstract void EmergencyStop();
         public abstract string GetStateName();
     }
 }

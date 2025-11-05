@@ -80,7 +80,7 @@ namespace ElevatorProject
             this.grpControls.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.grpControls.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold);
             this.grpControls.ForeColor = System.Drawing.Color.White;
-            this.grpControls.Location = new System.Drawing.Point(450, 150);
+            this.grpControls.Location = new System.Drawing.Point(450, 170);
             this.grpControls.Name = "grpControls";
             this.grpControls.Size = new System.Drawing.Size(240, 320);
             this.grpControls.TabIndex = 1;
@@ -170,9 +170,9 @@ namespace ElevatorProject
             this.lblDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblDisplay.Font = new System.Drawing.Font("Consolas", 18F, System.Drawing.FontStyle.Bold);
             this.lblDisplay.ForeColor = System.Drawing.Color.Lime;
-            this.lblDisplay.Location = new System.Drawing.Point(30, 40);
+            this.lblDisplay.Location = new System.Drawing.Point(10, 40);
             this.lblDisplay.Name = "lblDisplay";
-            this.lblDisplay.Size = new System.Drawing.Size(180, 50);
+            this.lblDisplay.Size = new System.Drawing.Size(220, 50);
             this.lblDisplay.TabIndex = 0;
             this.lblDisplay.Text = "FLOOR 0";
             this.lblDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -181,7 +181,7 @@ namespace ElevatorProject
             this.lblFloor1.AutoSize = true;
             this.lblFloor1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblFloor1.ForeColor = System.Drawing.Color.White;
-            this.lblFloor1.Location = new System.Drawing.Point(480, 90);
+            this.lblFloor1.Location = new System.Drawing.Point(450, 90);
             this.lblFloor1.Name = "lblFloor1";
             this.lblFloor1.Size = new System.Drawing.Size(90, 28);
             this.lblFloor1.TabIndex = 2;
@@ -193,7 +193,7 @@ namespace ElevatorProject
             this.btnCall1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCall1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold);
             this.btnCall1.ForeColor = System.Drawing.Color.White;
-            this.btnCall1.Location = new System.Drawing.Point(480, 120);
+            this.btnCall1.Location = new System.Drawing.Point(450, 120);
             this.btnCall1.Name = "btnCall1";
             this.btnCall1.Size = new System.Drawing.Size(100, 40);
             this.btnCall1.TabIndex = 3;
@@ -204,7 +204,7 @@ namespace ElevatorProject
             this.lblFloor0.AutoSize = true;
             this.lblFloor0.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblFloor0.ForeColor = System.Drawing.Color.White;
-            this.lblFloor0.Location = new System.Drawing.Point(430, 520);
+            this.lblFloor0.Location = new System.Drawing.Point(450, 520);
             this.lblFloor0.Name = "lblFloor0";
             this.lblFloor0.Size = new System.Drawing.Size(90, 28);
             this.lblFloor0.TabIndex = 4;
@@ -216,7 +216,7 @@ namespace ElevatorProject
             this.btnCall0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCall0.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold);
             this.btnCall0.ForeColor = System.Drawing.Color.White;
-            this.btnCall0.Location = new System.Drawing.Point(430, 550);
+            this.btnCall0.Location = new System.Drawing.Point(450, 550);
             this.btnCall0.Name = "btnCall0";
             this.btnCall0.Size = new System.Drawing.Size(100, 40);
             this.btnCall0.TabIndex = 5;
@@ -253,6 +253,8 @@ namespace ElevatorProject
 
             // pnlFloor1Doors
             this.pnlFloor1Doors.BackColor = System.Drawing.Color.Transparent;
+            this.pnlFloor1Doors.BackgroundImage = global::ElevatorProject.Properties.Resources.Elevator;
+            this.pnlFloor1Doors.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pnlFloor1Doors.Controls.Add(this.floor1DoorLeft);
             this.pnlFloor1Doors.Controls.Add(this.floor1DoorRight);
             this.pnlFloor1Doors.Location = new System.Drawing.Point(40, 40);
@@ -260,8 +262,11 @@ namespace ElevatorProject
             this.pnlFloor1Doors.Size = new System.Drawing.Size(240, 280);
             this.pnlFloor1Doors.TabIndex = 3;
 
+
             // floor1DoorLeft
             this.floor1DoorLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.floor1DoorLeft.BackgroundImage = global::ElevatorProject.Properties.Resources.left_door;
+            this.floor1DoorLeft.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.floor1DoorLeft.Location = new System.Drawing.Point(0, 0);
             this.floor1DoorLeft.Name = "floor1DoorLeft";
             this.floor1DoorLeft.Size = new System.Drawing.Size(120, 280);
@@ -269,6 +274,8 @@ namespace ElevatorProject
 
             // floor1DoorRight
             this.floor1DoorRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.floor1DoorRight.BackgroundImage = global::ElevatorProject.Properties.Resources.right_door;
+            this.floor1DoorRight.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.floor1DoorRight.Location = new System.Drawing.Point(120, 0);
             this.floor1DoorRight.Name = "floor1DoorRight";
             this.floor1DoorRight.Size = new System.Drawing.Size(120, 280);
@@ -276,6 +283,8 @@ namespace ElevatorProject
 
             // pnlFloor0Doors
             this.pnlFloor0Doors.BackColor = System.Drawing.Color.Transparent;
+            this.pnlFloor0Doors.BackgroundImage = global::ElevatorProject.Properties.Resources.Elevator;
+            this.pnlFloor0Doors.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pnlFloor0Doors.Controls.Add(this.floor0DoorLeft);
             this.pnlFloor0Doors.Controls.Add(this.floor0DoorRight);
             this.pnlFloor0Doors.Location = new System.Drawing.Point(40, 380);
@@ -285,6 +294,8 @@ namespace ElevatorProject
 
             // floor0DoorLeft
             this.floor0DoorLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.floor0DoorLeft.BackgroundImage = global::ElevatorProject.Properties.Resources.right_door;
+            this.floor0DoorLeft.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.floor0DoorLeft.Location = new System.Drawing.Point(0, 0);
             this.floor0DoorLeft.Name = "floor0DoorLeft";
             this.floor0DoorLeft.Size = new System.Drawing.Size(120, 280);
@@ -292,6 +303,8 @@ namespace ElevatorProject
 
             // floor0DoorRight
             this.floor0DoorRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.floor0DoorRight.BackgroundImage = global::ElevatorProject.Properties.Resources.right_door;
+            this.floor0DoorRight.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.floor0DoorRight.Location = new System.Drawing.Point(120, 0);
             this.floor0DoorRight.Name = "floor0DoorRight";
             this.floor0DoorRight.Size = new System.Drawing.Size(120, 280);

@@ -24,7 +24,7 @@ namespace ElevatorProject.Models
         private int _targetY; // Removed readonly
         private readonly int _floor0Y = 380;
         private readonly int _floor1Y = 40;
-        private const int MOVE_SPEED = 3;
+        private const int MOVE_SPEED = 20;
 
         // Doors - remove readonly from fields that change
         private Panel _elevatorDoorLeft;

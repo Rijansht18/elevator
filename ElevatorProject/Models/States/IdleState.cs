@@ -9,31 +9,33 @@
             if (floor == controller.CurrentFloor)
             {
                 controller.Logger.Log("Already at floor " + floor, "STATE");
+                controller.OpenDoorsInternal();
                 return;
             }
 
-            controller.Logger.Log($"Going from floor {controller.CurrentFloor} to floor {floor}", "STATE");
+            controller.Logger.Log($"Moving from floor {controller.CurrentFloor} to floor {floor}", "MOVEMENT");
             controller.MoveToFloorInternal(floor);
         }
 
         public override void OpenDoors()
         {
-            controller.Logger.Log("Can't open doors in idle", "STATE");
+            controller.Logger.Log("Opening doors from idle state", "DOOR");
+            controller.OpenDoorsInternal();
         }
 
         public override void CloseDoors()
         {
-            controller.Logger.Log("Doors already closed", "STATE");
+            controller.Logger.Log("Doors already closed in idle state", "DOOR");
         }
 
         public override void ArriveAtFloor(int floor)
         {
-            controller.Logger.Log("Error: Can't arrive while idle", "STATE");
+            controller.Logger.Log("Cannot arrive while idle", "STATE");
         }
 
         public override void EmergencyStop()
         {
-            controller.Logger.Log("Emergency stop!", "EMERGENCY");
+            controller.Logger.Log("Emergency stop activated", "EMERGENCY");
             controller.EmergencyStopInternal();
         }
 

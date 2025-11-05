@@ -12,20 +12,19 @@
 
         public override void OpenDoors()
         {
-            controller.Logger.Log("Opening doors...", "STATE");
-            controller.OpenDoorsInternal();
+            controller.Logger.Log("Doors already opening automatically", "STATE");
         }
 
         public override void CloseDoors()
         {
-            controller.Logger.Log("Skipping door open", "STATE");
-            // Just transition back to idle without opening
-            controller.SetState(new IdleState(controller));
+            controller.Logger.Log("Can't close doors - they need to open first after arrival", "STATE");
         }
 
         public override void ArriveAtFloor(int floor)
         {
-            controller.Logger.Log("Already arrived", "STATE");
+            // This automatically opens doors when arriving
+            controller.Logger.Log("Arrived at floor, opening doors automatically", "ARRIVAL");
+            controller.OpenDoorsInternal();
         }
 
         public override void EmergencyStop()

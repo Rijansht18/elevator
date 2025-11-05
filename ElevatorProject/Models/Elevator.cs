@@ -8,6 +8,7 @@ namespace ElevatorProject.Models
         public bool IsMoving { get; private set; } = false;
 
         public event EventHandler<int> FloorChanged;
+        public event EventHandler MovementStarted;
         public event EventHandler MovementCompleted;
 
         public void MoveToFloor(int targetFloor)
@@ -16,6 +17,7 @@ namespace ElevatorProject.Models
                 return;
 
             IsMoving = true;
+            MovementStarted?.Invoke(this, EventArgs.Empty);
         }
 
         public void OnArrivedAtFloor(int floor)

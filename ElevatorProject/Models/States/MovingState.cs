@@ -6,23 +6,23 @@
 
         public override void MoveToFloor(int floor)
         {
-            controller.Logger.Log($"Already moving. Floor {floor} queued", "STATE");
+            controller.Logger.Log($"Already moving. Floor {floor} queued", "QUEUE");
             controller.QueueFloorRequest(floor);
         }
 
         public override void OpenDoors()
         {
-            controller.Logger.Log("Can't open doors while moving", "STATE");
+            controller.Logger.Log("Cannot open doors while moving", "DOOR");
         }
 
         public override void CloseDoors()
         {
-            controller.Logger.Log("Doors already closed", "STATE");
+            controller.Logger.Log("Doors already closed while moving", "DOOR");
         }
 
         public override void ArriveAtFloor(int floor)
         {
-            controller.Logger.Log($"Arrived at floor {floor}", "STATE");
+            controller.Logger.Log($"Arrived at floor {floor}", "ARRIVAL");
             controller.ArriveAtFloorInternal(floor);
         }
 

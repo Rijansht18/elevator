@@ -6,36 +6,36 @@
 
         public override void MoveToFloor(int floor)
         {
-            controller.Logger.Log($"Closing doors to move to floor {floor}", "STATE");
+            controller.Logger.Log($"Closing doors to move to floor {floor}", "DOOR");
             controller.QueueFloorRequest(floor);
             controller.CloseDoorsInternal();
         }
 
         public override void OpenDoors()
         {
-            controller.Logger.Log("Doors already open", "STATE");
+            controller.Logger.Log("Doors already open", "DOOR");
         }
 
         public override void CloseDoors()
         {
-            controller.Logger.Log("Closing doors...", "STATE");
+            controller.Logger.Log("Closing doors manually", "DOOR");
             controller.CloseDoorsInternal();
         }
 
         public override void ArriveAtFloor(int floor)
         {
-            controller.Logger.Log("Already at floor", "STATE");
+            controller.Logger.Log("Already arrived at floor", "ARRIVAL");
         }
 
         public override void EmergencyStop()
         {
-            controller.Logger.Log("Emergency stop!", "EMERGENCY");
+            controller.Logger.Log("Emergency stop with doors open!", "EMERGENCY");
             controller.EmergencyStopInternal();
         }
 
         public override string GetStateName()
         {
-            return "DoorOpen";
+            return "DoorsOpen";
         }
     }
 }
